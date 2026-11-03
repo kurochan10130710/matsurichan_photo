@@ -395,17 +395,18 @@
       display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
     }
     .trade-table-wrapper {
-      max-height: 400px; overflow-y: auto; overflow-x: auto; border: 1px solid var(--border-light); border-radius: 10px;
+      max-height: 400px; overflow-y: auto; border: 1px solid var(--border-light); border-radius: 10px;
       -webkit-overflow-scrolling: touch;
     }
     .trade-table {
-      width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem; min-width: 480px;
+      width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem; table-layout: fixed;
     }
     .trade-table th, .trade-table td {
-      padding: 8px 10px; border-bottom: 1px solid var(--border-light); text-align: center; vertical-align: middle;
+      padding: 6px 4px; border-bottom: 1px solid var(--border-light); text-align: center; vertical-align: middle;
+      word-break: break-word;
     }
     .trade-table th:first-child, .trade-table td:first-child {
-      text-align: left;
+      text-align: left; padding-left: 8px;
     }
     .trade-table th {
       background: #F8FAFC; color: var(--text-dark); position: sticky; top: 0; z-index: 2; font-weight: 700;
@@ -432,16 +433,17 @@
 
     .missing-table-item {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
+      align-items: center;
+      gap: 6px;
     }
     .missing-table-img {
-      width: 36px;
-      height: 54px;
+      width: 32px;
+      height: 48px;
       object-fit: cover;
       border-radius: 4px;
       border: 1px solid var(--border-light);
       background: #E2E8F0;
+      flex-shrink: 0;
     }
 
     footer { margin-top: 40px; padding: 20px; text-align: center; font-size: 0.72rem; color: var(--text-muted); border-top: 1px solid var(--border-light); }
@@ -458,6 +460,9 @@
       .filter-group { justify-content: flex-start; }
       .generator-box div[style*="display:flex"] { flex-direction: column; }
       .btn-submit { width: 100%; }
+      .trade-table { font-size: 0.7rem; }
+      .trade-table th, .trade-table td { padding: 5px 2px; }
+      .missing-table-img { width: 24px; height: 36px; }
     }
   </style>
 </head>
@@ -540,7 +545,7 @@
             <button class="filter-btn" onclick="setTypeFilter('限定', this)">限定</button>
           </div>
           <div class="filter-group">
-            <input type="text" class="search-input" id="searchInput" placeholder="生写真名で検索(ひらがな可)..." oninput="renderPhotos()">
+            <input type="text" class="search-input" id="searchInput" placeholder="フリーワード検索..." oninput="renderPhotos()">
           </div>
         </div>
 
@@ -566,17 +571,17 @@
 
     <!-- 未所持の生写真一覧タブ -->
     <div id="tab-missing" style="display:none;">
-      <h2 style="font-size:1.1rem; margin-bottom:14px; font-weight:700; color:var(--text-dark);">未所持の生写真一覧（表形式）</h2>
+      <h2 style="font-size:1.1rem; margin-bottom:14px; font-weight:700; color:var(--text-dark);">未所持の生写真一覧</h2>
       <div class="trade-section">
         <div class="trade-table-wrapper">
           <table class="trade-table">
             <thead>
               <tr>
-                <th style="text-align: left; width: 45%;">生写真名（ヨリ画像付）</th>
-                <th style="width: 13.75%;">ヨリ</th>
-                <th style="width: 13.75%;">チュウ</th>
-                <th style="width: 13.75%;">座り</th>
-                <th style="width: 13.75%;">ヒキ</th>
+                <th style="text-align: left; width: 44%;">生写真名</th>
+                <th style="width: 14%;">ヨリ</th>
+                <th style="width: 14%;">チュウ</th>
+                <th style="width: 14%;">座り</th>
+                <th style="width: 14%;">ヒキ</th>
               </tr>
             </thead>
             <tbody id="missingTableBody"></tbody>
@@ -599,11 +604,11 @@
           <table class="trade-table" id="tradeMissingTable">
             <thead>
               <tr>
-                <th style="text-align: left; width: 40%;">生写真名</th>
-                <th style="width: 15%;">ヨリ</th>
-                <th style="width: 15%;">チュウ</th>
-                <th style="width: 15%;">座り</th>
-                <th style="width: 15%;">ヒキ</th>
+                <th style="text-align: left; width: 44%;">生写真名</th>
+                <th style="width: 14%;">ヨリ</th>
+                <th style="width: 14%;">チュウ</th>
+                <th style="width: 14%;">座り</th>
+                <th style="width: 14%;">ヒキ</th>
               </tr>
             </thead>
             <tbody id="tradeMissingTableBody"></tbody>
@@ -639,221 +644,220 @@
     const SUPPORTED_EXTENSIONS = ['jpg', 'png', 'heic', 'jpeg', 'webp'];
 
     const MASTER_PHOTOS = [
-      { id: 'keyaki_blazer', name: 'ブレザー制服衣装', group: '欅坂', type: '通常', year: 2019 },
-      { id: 'keyaki_omitate', name: 'お見立て会衣装', group: '欅坂', type: '通常', year: 2019 },
-      { id: 'keyaki_3rd_anniv_osaka', name: '3rd YEAR ANNIVERSARY LIVE 大阪公演衣装', group: '欅坂', type: '通常', year: 2019 },
-      { id: 'keyaki_outdoor', name: 'アウトドア衣装', group: '欅坂', type: '通常', year: 2019 },
-      { id: 'keyaki_rainy_day', name: '雨の日コーディネート衣装', group: '欅坂', type: '通常', year: 2019 },
-      { id: 'keyaki_yukata_2019', name: '2019浴衣衣装', group: '欅坂', type: '通常', year: 2019 },
-      { id: 'keyaki_summer_fes_2019', name: '2019夏フェス衣装', group: '欅坂', type: '通常', year: 2019 },
-      { id: 'keyaki_marble_harness_2019', name: '2019マーブルハーネス衣装', group: '欅坂', type: '通常', year: 2019 },
-      { id: 'keyaki_tokyo_dome_cape', name: '東京ドームサイマジョマント衣装', group: '欅坂', type: '通常', year: 2019 },
-      { id: 'keyaki_kyokoku_uniform_2019', name: '欅共和国2019制服衣装', group: '欅坂', type: '通常', year: 2019 },
-      { id: 'keyaki_tour_suit_2019', name: '2019ツアースーツ衣装', group: '欅坂', type: '通常', year: 2019 },
-      { id: 'keyaki_dare_kane', name: '誰がその鐘を鳴らすのか？衣装', group: '欅坂', type: '通常', year: 2020 },
-      { id: 'keyaki_kohaku_2019_synchro', name: '紅白2019シンクロニシティ衣装', group: '欅坂', type: '通常', year: 2020 },
-      { id: 'keyaki_yukata_2020', name: '2020浴衣衣装', group: '欅坂', type: '通常', year: 2020 },
-      { id: 'keyaki_2ki_saimajo', name: '二期生『サイレントマジョリティー』衣装', group: '欅坂', type: '通常', year: 2020 },
-      { id: 'keyaki_2ki_sekai', name: '二期生『世界には愛しかない』衣装', group: '欅坂', type: '通常', year: 2020 },
-      { id: 'keyaki_2ki_saison', name: '二期生『二人セゾン』衣装', group: '欅坂', type: '通常', year: 2020 },
-      { id: 'keyaki_live_online', name: 'Live Online,but with YOU!衣装', group: '欅坂', type: '通常', year: 2020 },
-      { id: 'keyaki_kohaku_2019_op', name: '紅白2019オープニング衣装', group: '欅坂', type: '通常', year: 2020 },
-      { id: 'keyaki_kohaku_2019_fukyokowaon', name: '紅白2019不協和音衣装', group: '欅坂', type: '通常', year: 2020 },
-      { id: 'keyaki_autumn_casual', name: '秋の私服コーディネート衣装', group: '欅坂', type: '通常', year: 2020 },
-      { id: 'keyaki_bokuta_uso', name: '僕たちの嘘と真実', group: '欅坂', type: '通常', year: 2020 },
+      { id: 'keyaki_blazer', name: 'ブレザー制服衣装', kana: 'ぶれざーせいふくいしょう', group: '欅坂', type: '通常', year: 2019 },
+      { id: 'keyaki_omitate', name: 'お見立て会衣装', kana: 'おみたてかいいしょう', group: '欅坂', type: '通常', year: 2019 },
+      { id: 'keyaki_3rd_anniv_osaka', name: '3rd YEAR ANNIVERSARY LIVE 大阪公演衣装', kana: 'さーどいやーあにばーさりーらいぶおおさかこうえんいしょう', group: '欅坂', type: '通常', year: 2019 },
+      { id: 'keyaki_outdoor', name: 'アウトドア衣装', kana: 'あうとどあいしょう', group: '欅坂', type: '通常', year: 2019 },
+      { id: 'keyaki_rainy_day', name: '雨の日コーディネート衣装', kana: 'あめのひこーでぃねーといしょう', group: '欅坂', type: '通常', year: 2019 },
+      { id: 'keyaki_yukata_2019', name: '2019浴衣衣装', kana: '2019ゆかたいしょう', group: '欅坂', type: '通常', year: 2019 },
+      { id: 'keyaki_summer_fes_2019', name: '2019夏フェス衣装', kana: '2019なつふぇすいしょう', group: '欅坂', type: '通常', year: 2019 },
+      { id: 'keyaki_marble_harness_2019', name: '2019マーブルハーネス衣装', kana: '2019まーぶるはーねすいしょう', group: '欅坂', type: '通常', year: 2019 },
+      { id: 'keyaki_tokyo_dome_cape', name: '東京ドームサイマジョマント衣装', kana: 'とうきょうどーむさまじょまんといしょう', group: '欅坂', type: '通常', year: 2019 },
+      { id: 'keyaki_kyokoku_uniform_2019', name: '欅共和国2019制服衣装', kana: 'けやききょうわこく2019せいふくいしょう', group: '欅坂', type: '通常', year: 2019 },
+      { id: 'keyaki_tour_suit_2019', name: '2019ツアースーツ衣装', kana: '2019つあーすーついしょう', group: '欅坂', type: '通常', year: 2019 },
+      { id: 'keyaki_dare_kane', name: '誰がその鐘を鳴らすのか？衣装', kana: 'だれがそのかねをならすのかいしょう', group: '欅坂', type: '通常', year: 2020 },
+      { id: 'keyaki_kohaku_2019_synchro', name: '紅白2019シンクロニシティ衣装', kana: 'こうはく2019しんくろにしてぃいしょう', group: '欅坂', type: '通常', year: 2020 },
+      { id: 'keyaki_yukata_2020', name: '2020浴衣衣装', kana: '2020ゆかたいしょう', group: '欅坂', type: '通常', year: 2020 },
+      { id: 'keyaki_2ki_saimajo', name: '二期生『サイレントマジョリティー』衣装', kana: 'にきせいさいれんとまじょりてぃーいしょう', group: '欅坂', type: '通常', year: 2020 },
+      { id: 'keyaki_2ki_sekai', name: '二期生『世界には愛しかない』衣装', kana: 'にきせいせかいにはあいしかないいしょう', group: '欅坂', type: '通常', year: 2020 },
+      { id: 'keyaki_2ki_saison', name: '二期生『二人セゾン』衣装', kana: 'にきせいふたりせぞんいしょう', group: '欅坂', type: '通常', year: 2020 },
+      { id: 'keyaki_live_online', name: 'Live Online,but with YOU!衣装', kana: 'らいぶおんらいんいしょう', group: '欅坂', type: '通常', year: 2020 },
+      { id: 'keyaki_kohaku_2019_op', name: '紅白2019オープニング衣装', kana: 'こうはく2019おーぷにんぐいしょう', group: '欅坂', type: '通常', year: 2020 },
+      { id: 'keyaki_kohaku_2019_fukyokowaon', name: '紅白2019不協和音衣装', kana: 'こうはく2019ふきょうわおんいしょう', group: '欅坂', type: '通常', year: 2020 },
+      { id: 'keyaki_autumn_casual', name: '秋の私服コーディネート衣装', kana: 'あきのしふくこーでぃねーといしょう', group: '欅坂', type: '通常', year: 2020 },
+      { id: 'keyaki_bokuta_uso', name: '僕たちの嘘と真実', kana: 'ぼくたちのうそとしんじつ', group: '欅坂', type: '通常',allowedPoses: ['ヨリ', 'チュウ', 'ヒキ'], year: 2020 },
 
-      { id: 'sakura_nobodys_fault', name: '「Nobody\'s fault」衣装', group: '櫻坂', type: '通常', year: 2020 },
-      { id: 'sakura_winter_casual', name: '冬私服コーディネート衣装', group: '櫻坂', type: '通常', year: 2020 },
-      { id: 'sakura_santa_2020', name: 'クリスマスサンタ衣装', group: '櫻坂', type: '通常', year: 2020 },
-      { id: 'sakura_furisode_2021', name: '2021年振袖衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_nobodys_fault_mv', name: '「Nobody\'s fault」MVロケーション衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_nobodys_fault_tv', name: '「Nobody\'s fault」カップリング楽曲TVパフォーマンス衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_last_live_day1', name: 'ラストライブDay1衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_last_live_day2', name: 'ラストライブDay2衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_tv_show_2020', name: '2020年歌番組衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_backs_live_casual', name: '「BACKS LIVE!!」メインビジュアル用私服衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_backs_live_mv', name: '「BACKS LIVE!!」メインビジュアル用MV衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_ban_mv', name: '「BAN」MVロケーション衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_ban_tv', name: '「BAN」歌番組衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_yukata_2021', name: '2021年 浴衣衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_summer_casual_2021', name: '2021年 夏私服コーディネート衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_nagaredama_mv', name: '「流れ弾」MVロケーション衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_santa_2021', name: '2021年サンタ衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_1st_tour_op', name: '「1st TOUR 2021」ライブオープニング衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_nagaredama_black', name: '「流れ弾」黒衣装', group: '櫻坂', type: '通常', year: 2021 },
-      { id: 'sakura_furisode_2022', name: '2022年振袖衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_nagaredama_jk', name: '「流れ弾」ジャケット写真衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_3rd_backs_live_mv', name: '3rd Single「BACKS LIVE!!」ビジュアルMV衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_samidareyo_mv', name: '「五月雨よ」MVロケーション衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_spring_casual_2022', name: '2022年春私服コーディネート衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_patissier', name: 'パティシエ衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_samidareyo_tv', name: '「五月雨よ」MVパフォーマンス衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_boku_no_dilemma_mv', name: '「僕のジレンマ」MVロケーション衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_w_keyaki_2021_pink', name: '「W-KEYAKI FES 2021」ライブパフォーマンス ピンク衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_risa_grad_cert', name: '「渡邊理佐 卒業コンサート」衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_camp_2022', name: '2022年キャンプコーディネート衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_yukata_2022', name: '2022年浴衣衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_friction_mv', name: '「摩擦係数」MV衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_1st_tour_live', name: '「1st TOUR 2021」ライブ衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_autumn_casual_2022', name: '2022年秋私服コーディネート衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_halloween_2022', name: '2022年ハロウィン衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_santa_2022', name: '2022年クリスマスサンタ衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_w_keyaki_2022_pink', name: '「W-KEYAKI FES 2022」ライブピンク衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_pajama_2022', name: '2022年 もこもこパジャマ衣装', group: '櫻坂', type: '通常', year: 2022 },
-      { id: 'sakura_furisode_2023', name: '2023年 振袖衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_usamimi', name: 'うさみみコーデ', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_winter_casual_2023', name: '2023年 冬私服コーデ', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_2nd_anniv_buddies', name: '「2nd YEAR ANNIVERSARY~Buddies感謝祭」ライブ衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_apron', name: 'エプロンコーデ', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_sakurazuki_mv', name: '「桜月」MV衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_2nd_tour_blue', name: '「2nd TOUR 2022」青衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_suit', name: 'スーツコーデ', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_sakurazuki_blue_mv', name: '「桜月」MV青衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_2nd_tour_op', name: '「2nd TOUR 2022」オープニング衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_color_coord', name: 'カラーコーデ', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_3rd_tour_op', name: '「3rd TOUR 2023」オープニング衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_taisho_roman', name: '大正浪漫衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_start_over_jk', name: '「Start over!」ジャケット写真衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_start_over_mv', name: '「Start over!」MV衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_summer_onepiece', name: 'サマーワンピース', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_drone_mv', name: '「ドローン旋回中」MV衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_w_keyaki_2022_redpink', name: '「W-KEYAKIFES.2022」赤ピンク衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_halloween_2023', name: '2023年ハロウィン衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_denim', name: 'デニムコーデ', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_ouchi', name: 'おうちコーデ', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_summer_fes_2023', name: '2023年夏フェス衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_3rd_tour_white_suit', name: '「3rd TOUR 2023」白スーツ衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_santa_2023', name: '2023年クリスマスサンタ衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_reading_2023', name: '2023年読書コーデ', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_year_end_2022', name: '2022年 年末歌唱衣装', group: '櫻坂', type: '通常', year: 2023 },
-      { id: 'sakura_furisode_2024', name: '2024年 振袖衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_shonin_yokkyu_jk', name: '「承認欲求」ジャケット写真衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_shonin_yokkyu_mv', name: '「承認欲求」MV衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_jump_suit', name: 'ジャンプスーツ', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_start_over_live', name: '「Start over!」歌唱衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_sukimakaze_mv', name: '「隙間風よ」MV衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_nansai_mv', name: '「何歳の頃に戻りたいのか？」MV衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_color_denim', name: 'カラーデニム', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_yui_grad_live', name: '「小林由依 卒業コンサート」ライブ衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_spring_casual_2024', name: '2024年 春私服コーデ', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_nansai_jk', name: '「何歳の頃に戻りたいのか？」ジャケット写真衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_3rd_anniv_live', name: '「3rd YEAR ANNIVERSARY LIVE」ライブ衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_3rd_tour_pink', name: '「3rd TOUR 2023」ピンク衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_3rd_tour_live', name: '「3rd TOUR 2023」ライブ衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_yui_grad_red', name: '「小林由依 卒業コンサート」赤衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_yukata_2024', name: '2024年 浴衣', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_year_end_2023', name: '2023年年末歌唱衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_straw_hat', name: '麦わら帽子コーデ', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_jigojitoku_mv', name: '「自業自得」MV衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_jigojitoku_jk', name: '「自業自得」ジャケット写真衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_4th_arena_tour_2024', name: '4th ARENA TOUR 2024 ライブ衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_color_knit', name: 'カラーニットコーデ', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_halloween_2024', name: '2024年 ハロウィン衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_animal', name: 'どうぶつ着ぐるみ', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_4th_tour_tokyo_op', name: '4th ARENA TOUR IN東京ドーム オープニング衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_3rd_anniv_live_2', name: '「3rd YEAR ANNIVERSARY LIVE」ライブ衣装 ', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_santa_2024', name: 'クリスマスサンタ衣装2024', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_muffler', name: 'マフラーコーデ', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_iwtc_mv', name: 'IWTC MV衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_iwtc_jk', name: 'IWTC ジャケット写真衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_inumimi', name: 'いぬみみコーデ', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_year_end_2023_special', name: '2023年 年末衣装', group: '櫻坂', type: '通常', year: 2024 },
-      { id: 'sakura_furisode_2025', name: '2025年 振袖', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_udagawa_mv', name: 'UDAGAWA MV衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_udagawa_jk', name: 'UDAGAWA ジャケット写真衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_mode_coord', name: 'モードコーデ', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_summer_fes_2024', name: '2024年 夏フェス衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_4th_tour_2024_op', name: '4th ARENA TOUR 2024 オープニング衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_necktie', name: 'ネクタイコーデ', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_4th_tour_live_general', name: '4th ARENA TOUR ライブ衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_4th_anniv_live', name: '4th YEAR ANNIVERSARY LIVE ライブ衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_leather_jacket', name: 'レザージャケットコーデ', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_addiction_mv', name: 'Addiction MV衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_polo_shirt', name: 'ポロシャツコーデ', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_summer_fes_2024_2', name: '2024年 夏フェス衣装 ', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_4th_tour_tokyo_live', name: '4th ARENA TOUR IN 東京ドーム ライブ衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_yukata_2025', name: '2025年 浴衣', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_classic_coord', name: 'クラシックコーデ', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_make_or_break_mv', name: 'Make or Break MV衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_make_or_break_mv_blue', name: 'Make or Break MV衣装（青）', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_make_or_break_jk', name: 'Make or Break ジャケット写真衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_check_coord', name: 'チェックコーデ', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_5th_tour_addiction', name: '5th TOUR 2025 Addiction ライブ衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_5th_tour_addiction_black', name: '5th TOUR 2025 Addiction 黒衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_pirates', name: 'パイレーツ衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_winter_clothes', name: '冬服', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_unhappy_birthday_red', name: 'Unhappy birthday構文 MV衣装 赤', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_unhappy_birthday_seifuku', name: 'Unhappy birthday構文 MV衣装 制服', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_unhappy_birthday_jk', name: 'Unhappy birthday構文 ジャケット写真衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_santa_2025', name: '2025年サンタ衣装', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_styling_seifuku', name: 'スタイリング制服', group: '櫻坂', type: '通常', year: 2025 },
-      { id: 'sakura_furisode_2026', name: '2026年振袖', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_jersey', name: 'ジャージ', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_valentine', name: 'バレンタインコーデ', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_5th_tour_dome_silver', name: '5thTOUR2025”Addiction”ドーム公演 シルバー衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_stajan', name: 'スタジャンコーデ', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_roomwear', name: 'ルームウェア', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_5th_tour_op', name: '5thTOUR2025”Addiction”オープニング衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_4th_anniv_op', name: '4thYEAR ANNIVERSARY LIVE オープニング衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_5th_anniv_dress', name: '5th Anniversary ドレス', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_growing_up_train_mv', name: 'The growing up train MV衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_growing_up_train_jk', name: 'The growing up train ジャケット写真衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_tweed', name: 'ツイードコーデ', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_gingham_check', name: 'ギンガムチェックコーデ', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_marine', name: 'マリン衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_kazoku_pajama_mv', name: 'What’s "KAZOKU"? MVパジャマ衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_kazoku_seifuku_mv', name: 'What’s "KAZOKU"? MV制服衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_lonesome_rabbit_mv', name: 'Lonsome rabitt MV衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_lonesome_rabbit_mv_dress', name: 'Lonsome rabitt MV衣装（ドレス）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_lonesome_kazoku_jk', name: 'Lonsome rabitt / What\'s "KAZOKU"? ジャケット写真衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_summer_knit', name: 'サマーニット', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_growing_up_train_sing', name: 'The growing up train 歌唱衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_5th_anniv_key_visual', name: '5th YEAR ANNIVERSARY LIVE キービジュアル衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_5th_tour_dome_op', name: '5th TOUR 2025 "Addiction" ドーム公演 オープニング衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_yukata_2026', name: '2026年浴衣', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_5th_tour_dome_stripe', name: '5th TOUR2025 "Addiction" ドーム公演 ストライプ衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_5th_anniv_live_outfit', name: '5th YEAR ANNIVERSARY LIVE ライブ衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_vitamin_coord', name: 'ビタミンコーデ', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_5th_anniv_op', name: '5th YEAR ANNIVERSARY LIVE オープニング衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_5th_anniv_bw', name: '5th YEAR ANNIVERSARY LIVE 白黒衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_year_end_2025_lightblue', name: '2025年 年末水色衣装', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_halloween_2026', name: '2026年 ハロウィン', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_omitate', name: '過去衣装ランダム（ブレザー制服）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_cdtv_saison', name: '過去衣装（2019年 年末歌唱）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_ban', name: '過去衣装（BAN MV）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_1st_aniv_pink', name: '過去衣装（1st YEAR ANNIVERSARY LIVE OP衣装）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_black_dress', name: '過去衣装（As you know? ジャケット写真衣装）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_shonin_seifuku', name: '過去衣装（承認欲求 制服）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_start_over', name: '過去衣装（2023年 NHK紅白歌唱衣装）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_nansai', name: '過去衣装（何歳の頃に戻りたいのか? パフォーマンス衣装）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_prince', name: '過去衣装（4th AREBA TOUR IN 東京ドーム OP衣装）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_raw_meat', name: '過去衣装（2024年 NHK紅白 水引ハーネス衣装）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_knight', name: '過去衣装（2024年 NHK紅白 騎士衣装）', group: '櫻坂', type: '通常', year: 2026 },
-      { id: 'sakura_past_cdtv_xmas', name: '過去衣装（Buddies感謝祭2025EX ライブ衣装）', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'funiu_1st_nobodys_fault', name: '1st「Nobody\'s fault」封入', kana: '1stのーばでぃずふぉーるとふんにゅう', group: '櫻坂', type: '封入', year: 2020 },
+      { id: 'sakura_nobodys_fault', name: '「Nobody\'s fault」衣装', kana: 'のーばでぃずふぉーるといしょう', group: '櫻坂', type: '通常', year: 2020 },
+      { id: 'sakura_winter_casual', name: '冬私服コーディネート衣装', kana: 'ふゆしふくこーでぃねーといしょう', group: '櫻坂', type: '通常', year: 2020 },
+      { id: 'sakura_santa_2020', name: 'クリスマスサンタ衣装', kana: 'くりすますさんたいしょう', group: '櫻坂', type: '通常', year: 2020 },
+      { id: 'sakura_furisode_2021', name: '2021年振袖衣装', kana: '2021ねんふりそでいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_nobodys_fault_mv', name: '「Nobody\'s fault」MVロケーション衣装', kana: 'のーばでぃずふぉーるとえむぶいろけーしょんいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_nobodys_fault_tv', name: '「Nobody\'s fault」カップリング楽曲TVパフォーマンス衣装', kana: 'のーばでぃずふぉーるとかっぷりんぐてれびいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_last_live_day1', name: 'ラストライブDay1衣装', kana: 'らすとらいぶでいいちいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_last_live_day2', name: 'ラストライブDay2衣装', kana: 'らすとらいぶでいにいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_tv_show_2020', name: '2020年歌番組衣装', kana: '2020ねんうたばんぐみいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_backs_live_casual', name: '「BACKS LIVE!!」メインビジュアル用私服衣装', kana: 'ばっくすらいぶしふくいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_backs_live_mv', name: '「BACKS LIVE!!」メインビジュアル用MV衣装', kana: 'ばっくすらいぶえむぶいいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'funiu_2nd_ban', name: '2nd「BAN」封入', kana: '2ndばんふんにゅう', group: '櫻坂', type: '封入', year: 2021 },
+      { id: 'sakura_ban_mv', name: '「BAN」MVロケーション衣装', kana: 'ばんえむぶいろけーしょんいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_ban_tv', name: '「BAN」歌番組衣装', kana: 'ばんうたばんぐみいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_yukata_2021', name: '2021年 浴衣衣装', kana: '2021ねんゆかたいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_summer_casual_2021', name: '2021年 夏私服コーディネート衣装', kana: '2021ねんなつしふくこーでぃねーといしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'funiu_3rd_nagaredama', name: '3rd「流れ弾」封入', kana: '3rdながれだまふんにゅう', group: '櫻坂', type: '封入', year: 2021 },
+      { id: 'sakura_nagaredama_mv', name: '「流れ弾」MVロケーション衣装', kana: 'ながれだまえむぶいろけーしょんいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_santa_2021', name: '2021年サンタ衣装', kana: '2021ねんさんたいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_1st_tour_op', name: '「1st TOUR 2021」ライブオープニング衣装', kana: '1stつあーらいぶおーぷにんぐいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_nagaredama_black', name: '「流れ弾」黒衣装', kana: 'ながれだまくろいしょう', group: '櫻坂', type: '通常', year: 2021 },
+      { id: 'sakura_furisode_2022', name: '2022年振袖衣装', kana: '2022ねんふりそでいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_nagaredama_jk', name: '「流れ弾」ジャケット写真衣装', kana: 'ながれだまじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_3rd_backs_live_mv', name: '3rd Single「BACKS LIVE!!」ビジュアルMV衣装', kana: '3rdばっくすらいぶえむぶいいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'funiu_4th_samidareyo', name: '4th「五月雨よ」封入', kana: '4thさみだれよふんにゅう', group: '櫻坂', type: '封入', year: 2022 },
+      { id: 'sakura_samidareyo_mv', name: '「五月雨よ」MVロケーション衣装', kana: 'さみだれよえむぶいろけーしょんいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_spring_casual_2022', name: '2022年春私服コーディネート衣装', kana: '2022ねんはるしふくこーでぃねーといしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_patissier', name: 'パティシエ衣装', kana: 'ぱてぃしえいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_samidareyo_tv', name: '「五月雨よ」MVパフォーマンス衣装', kana: 'さみだれよえむぶいぱふぉーまんすいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_boku_no_dilemma_mv', name: '「僕のジレンマ」MVロケーション衣装', kana: 'ぼくのじれんまえむぶいろけーしょんいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_w_keyaki_2021_pink', name: '「W-KEYAKI FES 2021」ライブパフォーマンス ピンク衣装', kana: 'だぶりゅーけやきふぇす2021ぴんくいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_risa_grad_cert', name: '「渡邊理佐 卒業コンサート」衣装', kana: 'わたなべりさそつぎょうこんさーといしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_camp_2022', name: '2022年キャンプコーディネート衣装', kana: '2022ねんきゃんぷこーでぃねーといしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_yukata_2022', name: '2022年浴衣衣装', kana: '2022ねんゆかたいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'funiu_1st_album', name: '1st Album「As you know？」封入', kana: '1stあるばむあずゆーのうふんにゅう', group: '櫻坂', type: '封入', allowedPoses: ['ヨリ', 'チュウ'], year: 2022 },
+      { id: 'sakura_friction_mv', name: '「摩擦係数」MV衣装', kana: 'まさつけいすうえむぶいいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_1st_tour_live', name: '「1st TOUR 2021」ライブ衣装', kana: '1stつあーらいぶいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_autumn_casual_2022', name: '2022年秋私服コーディネート衣装', kana: '2022ねんあきしふくこーでぃねーといしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_halloween_2022', name: '2022年ハロウィン衣装', kana: '2022ねんはろうぃんいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_santa_2022', name: '2022年クリスマスサンタ衣装', kana: '2022ねんくりすますさんたいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_w_keyaki_2022_pink', name: '「W-KEYAKI FES 2022」ライブピンク衣装', kana: 'だぶりゅーけやきふぇす2022ぴんくいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_pajama_2022', name: '2022年 もこもこパジャマ衣装', kana: '2022ねんもこもこぱじゃまいしょう', group: '櫻坂', type: '通常', year: 2022 },
+      { id: 'sakura_furisode_2023', name: '2023年 振袖衣装', kana: '2023ねんふりそでいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_usamimi', name: 'うさみみコーデ', kana: 'うさみみこーで', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_winter_casual_2023', name: '2023年 冬私服コーデ', kana: '2023ねんふゆしふくこーで', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_2nd_anniv_buddies', name: '「2nd YEAR ANNIVERSARY~Buddies感謝祭」ライブ衣装', kana: 'せかんどいやーあにばーさりーばでぃーずかんしゃさいらいぶいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_apron', name: 'エプロンコーデ', kana: 'えぷろんこーで', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'funiu_5th_sakurazuki', name: '5th「桜月」封入', kana: '5thさくらづきふんにゅう', group: '櫻坂', type: '封入', year: 2023 },
+      { id: 'sakura_sakurazuki_mv', name: '「桜月」MV衣装', kana: 'さくらづきえむぶいいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_2nd_tour_blue', name: '「2nd TOUR 2022」青衣装', kana: '2ndつあーあおいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_suit', name: 'スーツコーデ', kana: 'すーつこーで', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_sakurazuki_blue_mv', name: '「桜月」MV青衣装', kana: 'さくらづきえむぶいあおいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_2nd_tour_op', name: '「2nd TOUR 2022」オープニング衣装', kana: '2ndつあーおーぷにんぐいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_color_coord', name: 'カラーコーデ', kana: 'からーこーで', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_3rd_tour_op', name: '「3rd TOUR 2023」オープニング衣装', kana: '3rdつあーおーぷにんぐいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_taisho_roman', name: '大正浪漫衣装', kana: 'たいしょうろまんいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'funiu_6th_start_over', name: '6th「Start over!」封入', kana: '6thすたーとおーばーふんにゅう', group: '櫻坂', type: '封入', year: 2023 },
+      { id: 'sakura_start_over_jk', name: '「Start over!」ジャケット写真衣装', kana: 'すたーとおーばーじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_start_over_mv', name: '「Start over!」MV衣装', kana: 'すたーとおーばーえむぶいいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_summer_onepiece', name: 'サマーワンピース', kana: 'さまーわんぴーす', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_drone_mv', name: '「ドローン旋回中」MV衣装', kana: 'どろーんせんかいちゅうえむぶいいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_w_keyaki_2022_redpink', name: '「W-KEYAKIFES.2022」赤ピンク衣装', kana: 'だぶりゅーけやきふぇすあかぴんくいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_halloween_2023', name: '2023年ハロウィン衣装', kana: '2023ねんはろうぃんいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_denim', name: 'デニムコーデ', kana: 'でにむこーで', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_ouchi', name: 'おうちコーデ', kana: 'おうちこーで', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_summer_fes_2023', name: '2023年夏フェス衣装', kana: '2023ねんなつふぇすいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_3rd_tour_white_suit', name: '「3rd TOUR 2023」白スーツ衣装', kana: '3rdつあーしろすーついしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_santa_2023', name: '2023年クリスマスサンタ衣装', kana: '2023ねんくりすますさんたいしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_reading_2023', name: '2023年読書コーデ', kana: '2023ねんどくしょこーで', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_year_end_2022', name: '2022年 年末歌唱衣装', kana: '2022ねんねんまつかしょういしょう', group: '櫻坂', type: '通常', year: 2023 },
+      { id: 'sakura_furisode_2024', name: '2024年 振袖衣装', kana: '2024ねんふりそでいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'funiu_7th_shonin', name: '7th「承認欲求」封入', kana: '7thしょうにんよくきゅうふんにゅう', group: '櫻坂', type: '封入', year: 2023 },
+      { id: 'sakura_shonin_yokkyu_jk', name: '「承認欲求」ジャケット写真衣装', kana: 'しょうにんよくきゅうじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_shonin_yokkyu_mv', name: '「承認欲求」MV衣装', kana: 'しょうにんよくきゅうえむぶいいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_jump_suit', name: 'ジャンプスーツ', kana: 'じゃんぷすーつ', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_start_over_live', name: '「Start over!」歌唱衣装', kana: 'すたーとおーばーかしょういしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_sukimakaze_mv', name: '「隙間風よ」MV衣装', kana: 'すきまかぜよえむぶいいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'funiu_8th_nansai', name: '8th「何歳の頃に戻りたいのか？」封入', kana: '8thなんさいのころにもどり学たいのかふんにゅう', group: '櫻坂', type: '封入', year: 2024 },
+      { id: 'sakura_nansai_mv', name: '「何歳の頃に戻りたいのか？」MV衣装', kana: 'なんさいのころにもどり学たいのかえむぶいいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_color_denim', name: 'カラーデニム', kana: 'からーでにむ', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_yui_grad_live', name: '「小林由依 卒業コンサート」ライブ衣装', kana: 'こばやしゆいそつぎょうこんさーとらいぶいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_spring_casual_2024', name: '2024年 春私服コーデ', kana: '2024ねんはるしふくこーで', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_nansai_jk', name: '「何歳の頃に戻りたいのか？」ジャケット写真衣装', kana: 'なんさいのころにもどり学たいのかじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_3rd_anniv_live', name: '「3rd YEAR ANNIVERSARY LIVE」ライブ衣装', kana: '3rdいやーあにばーさりーらいぶいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_3rd_tour_pink', name: '「3rd TOUR 2023」ピンク衣装', kana: '3rdつあーぴんくいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_3rd_tour_live', name: '「3rd TOUR 2023」ライブ衣装', kana: '3rdつあーらいぶいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_yui_grad_red', name: '「小林由依 卒業コンサート」赤衣装', kana: 'こばやしゆいそつぎょうこんさーとあかいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'funiu_9th_jigojitoku', name: '9th「自業自得」封入', kana: '9thじごうじとくふんにゅう', group: '櫻坂', type: '封入', year: 2024 },
+      { id: 'sakura_yukata_2024', name: '2024年 浴衣', kana: '2024ねんゆかた', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'limited_tokyo_dome_jigojitoku', name: '「自業自得」東京ドーム限定', kana: 'じごうじとくとうきょうどーむげんてい', group: '櫻坂', type: '限定', allowedPoses: ['ヨリ'], year: 2024 },
+      { id: 'limited_tokyo_dome_secret', name: '東京ドーム限定秘蔵生写真（当選者100名）', kana: 'とうきょうどーむげんていひぞうなましゃしん', group: '櫻坂', type: '限定', allowedPoses: ['チュウ'], year: 2024 },
+      { id: 'sakura_year_end_2023', name: '2023年年末歌唱衣装', kana: '2023ねんねんまつかしょういしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_straw_hat', name: '麦わら帽子コーデ', kana: 'むぎわらぼうしこーで', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_jigojitoku_mv', name: '「自業自得」MV衣装', kana: 'じごうじとくえむぶいいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_jigojitoku_jk', name: '「自業自得」ジャケット写真衣装', kana: 'じごうじとくじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_4th_arena_tour_2024', name: '4th ARENA TOUR 2024 ライブ衣装', kana: '4thありーなつあーらいぶいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_color_knit', name: 'カラーニットコーデ', kana: 'からーにっとこーで', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_halloween_2024', name: '2024年 ハロウィン衣装', kana: '2024ねんはろうぃんいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_animal', name: 'どうぶつ着ぐるみ', kana: 'どうぶつきぐるみ', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_4th_tour_tokyo_op', name: '4th ARENA TOUR IN東京ドーム オープニング衣装', kana: '4thありーなつあーいんとうきょうどーむおーぷにんぐいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_3rd_anniv_live_2', name: '「3rd YEAR ANNIVERSARY LIVE」ライブ衣装 ', kana: '3rdいやーあにばーさりーらいぶいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_santa_2024', name: 'クリスマスサンタ衣装2024', kana: 'くりすますさんたいしょう2024', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_muffler', name: 'マフラーコーデ', kana: 'まふらーこーで', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'funiu_10th_iwtc', name: '10th「I want tomorrow to come」封入', kana: '10thあいうぉんととぅもろーとぅかむふんにゅう', group: '櫻坂', type: '封入', year: 2024 },
+      { id: 'sakura_iwtc_mv', name: 'I want tomorrow to come MV衣装', kana: 'あいうぉんととぅもろーとぅかむえむぶいいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_iwtc_jk', name: 'I want tomorrow to come ジャケット写真衣装', kana: 'あいうぉんととぅもろーとぅかむじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_inumimi', name: 'いぬみみコーデ', kana: 'いぬみみこーで', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'sakura_year_end_2023_special', name: '2023年 年末衣装', kana: '2023ねんねんまついしょう', group: '櫻坂', type: '通常', year: 2024 },
+      { id: 'limited_fukubukuro_2025', name: '福袋2025', kana: 'ふくぶくろ2025', group: '櫻坂', type: '限定', allowedPoses: ['ヨリ'], year: 2025 },
+      { id: 'sakura_furisode_2025', name: '2025年 振袖', kana: '2025ねんふりそで', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'funiu_11th_udagawa', name: '11th「UDAGAWA GENERATION」封入', kana: '11thうだがわじぇねれーしょんふんにゅう', group: '櫻坂', type: '封入', year: 2025 },
+      { id: 'sakura_udagawa_mv', name: 'UDAGAWA GENERATION MV衣装', kana: 'うだがわえむぶいいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_udagawa_jk', name: 'UDAGAWA GENERATION ジャケット写真衣装', kana: 'うだがわじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_mode_coord', name: 'モードコーデ', kana: 'もーどこーで', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_summer_fes_2024', name: '2024年 夏フェス衣装', kana: '2024ねんなつふぇすいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_4th_tour_2024_op', name: '4th ARENA TOUR 2024 オープニング衣装', kana: '4thありーなつあーおーぷにんぐいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_necktie', name: 'ネクタイコーデ', kana: 'ねくたいこーで', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_4th_tour_live_general', name: '4th ARENA TOUR ライブ衣装', kana: '4thありーなつあーらいぶいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_4th_anniv_live', name: '4th YEAR ANNIVERSARY LIVE ライブ衣装', kana: '4thいやーあにばーさりーらいぶいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_leather_jacket', name: 'レザージャケットコーデ', kana: 'れざーじゃけっとこーで', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'funiu_2nd_album', name: '2nd Album「Addiction」封入', kana: '2ndあるばむあでぃくしょんふんにゅう', group: '櫻坂', type: '封入', year: 2025 },
+      { id: 'sakura_addiction_mv', name: 'Addiction MV衣装', kana: 'あでぃくしょんえむぶいいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_polo_shirt', name: 'ポロシャツコーデ', kana: 'ぽろしゃつこーで', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_summer_fes_2024_2', name: '2024年 夏フェス衣装 ', kana: '2024ねんなつふぇすいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_4th_tour_tokyo_live', name: '4th ARENA TOUR IN 東京ドーム ライブ衣装', kana: '4thありーなつあーいんとうきょうどーむらいぶいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_yukata_2025', name: '2025年 浴衣', kana: '2025ねんゆかた', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_classic_coord', name: 'クラシックコーデ', kana: 'くらしっくこーで', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'funiu_12th_make_or_break', name: '12th「Make or Break」封入', kana: '12thめいくおあぶれいくふんにゅう', group: '櫻坂', type: '封入', year: 2025 },
+      { id: 'sakura_make_or_break_mv', name: 'Make or Break MV衣装', kana: 'めいくおあぶれいくえむぶいいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_make_or_break_mv_blue', name: 'Make or Break MV衣装（青）', kana: 'めいくおあぶれいくえむぶいいしょうあお', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_make_or_break_jk', name: 'Make or Break ジャケット写真衣装', kana: 'めいくおあぶれいくじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_check_coord', name: 'チェックコーデ', kana: 'ちぇっくこーで', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_5th_tour_addiction', name: '5th TOUR 2025 Addiction ライブ衣装', kana: '5thつあーあでぃくしょんらいぶいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_5th_tour_addiction_black', name: '5th TOUR 2025 Addiction 黒衣装', kana: '5thつあーあでぃくしょんくろいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'funiu_13th_unhappy_birthday', name: '13th「Unhappy birthday構文」封入', kana: '13thあんはっぴーばーすでーこうぶんふんにゅう', group: '櫻坂', type: '封入', year: 2025 },
+      { id: 'sakura_pirates', name: 'パイレーツ衣装', kana: 'ぱいれーついしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_winter_clothes', name: '冬服', kana: 'ふゆふく', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_unhappy_birthday_red', name: 'Unhappy birthday構文 MV衣装 赤', kana: 'あんはっぴーばーすでーこうぶんえむぶいいしょうあか', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_unhappy_birthday_seifuku', name: 'Unhappy birthday構文 MV衣装 制服', kana: 'あんはっぴーばーすでーこうぶんえむぶいいしょうせいふく', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_unhappy_birthday_jk', name: 'Unhappy birthday構文 ジャケット写真衣装', kana: 'あんはっぴーばーすでーこうぶんじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_santa_2025', name: '2025年サンタ衣装', kana: '2025ねんさんたいしょう', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_styling_seifuku', name: 'スタイリング制服', kana: 'すたいりんぐせいふく', group: '櫻坂', type: '通常', year: 2025 },
+      { id: 'sakura_furisode_2026', name: '2026年振袖', kana: '2026ねんふりそで', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'limited_fukubukuro_2026', name: '福袋2026', kana: 'ふくぶくろ2026', group: '櫻坂', type: '限定', allowedPoses: ['ヨリ'], year: 2026 },
+      { id: 'sakura_jersey', name: 'ジャージ', kana: 'じゃーじ', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_valentine', name: 'バレンタインコーデ', kana: 'ばれんたいんこーで', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_5th_tour_dome_silver', name: '5thTOUR2025”Addiction”ドーム公演 シルバー衣装', kana: '5thつあーどーむこうえんしるばーいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_stajan', name: 'スタジャンコーデ', kana: 'すたじゃんこーで', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_roomwear', name: 'ルームウェア', kana: 'るーむうぇあ', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_5th_tour_op', name: '5thTOUR2025”Addiction”オープニング衣装', kana: '5thつあーおーぷにんぐいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_4th_anniv_op', name: '4thYEAR ANNIVERSARY LIVE オープニング衣装', kana: '4thいやーあにばーさりーらいぶおーぷにんぐいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_5th_anniv_dress', name: '5th Anniversary ドレス', kana: '5thあにばーさりーどれす', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'funiu_14th_growing_up_train', name: '14th「The growing up train」封入', kana: '14thざぐろういんぐあっぷとれいんふんにゅう', group: '櫻坂', type: '封入', year: 2026 },
+      { id: 'sakura_growing_up_train_mv', name: 'The growing up train MV衣装', kana: 'ざぐろういんぐあっぷとれいんえむぶいいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_growing_up_train_jk', name: 'The growing up train ジャケット写真衣装', kana: 'ざぐろういんぐあっぷとれいんじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_tweed', name: 'ツイードコーデ', kana: 'ついーどこーで', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_gingham_check', name: 'ギンガムチェックコーデ', kana: 'ぎんがむちぇっくこーで', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_marine', name: 'マリン衣装', kana: 'まりんいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'funiu_15th_lonesome_kazoku', name: '15th「Lonsome rabitt / What\'s "KAZOKU"? 」封入', kana: '15thろんさむらびっとかぞくふんにゅう', group: '櫻坂', type: '封入', year: 2026 },
+      { id: 'sakura_kazoku_pajama_mv', name: 'What’s "KAZOKU"? MVパジャマ衣装', kana: 'かぞくえむぶいぱじゃまいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_kazoku_seifuku_mv', name: 'What’s "KAZOKU"? MV制服衣装', kana: 'かぞくえむぶいせいふくいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_lonesome_rabbit_mv', name: 'Lonsome rabitt MV衣装', kana: 'ろんさむらびっとえむぶいいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_lonesome_rabbit_mv_dress', name: 'Lonsome rabitt MV衣装（ドレス）', kana: 'ろんさむらびっとえむぶいいしょうどれす', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_lonesome_kazoku_jk', name: 'Lonsome rabitt / What\'s "KAZOKU"? ジャケット写真衣装', kana: 'ろんさむらびっとかぞくじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_summer_knit', name: 'サマーニット', kana: 'さまーにっと', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_growing_up_train_sing', name: 'The growing up train 歌唱衣装', kana: 'ざぐろういんぐあっぷとれいんかしょういしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_5th_anniv_key_visual', name: '5th YEAR ANNIVERSARY LIVE キービジュアル衣装', kana: '5thいやーあにばーさりーらいぶきーびじゅあるいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_5th_tour_dome_op', name: '5th TOUR 2025 "Addiction" ドーム公演 オープニング衣装', kana: '5thつあーどーむこうえんおーぷにんぐいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_yukata_2026', name: '2026年浴衣', kana: '2026ねんゆかた', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_5th_tour_dome_stripe', name: '5th TOUR2025 "Addiction" ドーム公演 ストライプ衣装', kana: '5thつあーどーむこうえんすとらいぷいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_5th_anniv_live_outfit', name: '5th YEAR ANNIVERSARY LIVE ライブ衣装', kana: '5thいやーあにばーさりーらいぶいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_vitamin_coord', name: 'ビタミンコーデ', kana: 'びたみんこーで', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'funiu_16th_ai_must_be', name: '16th「愛 MUST BE」封入', kana: '16thあいますとびーふんにゅう', group: '櫻坂', type: '封入', year: 2026 },
+      { id: 'sakura_5th_anniv_op', name: '5th YEAR ANNIVERSARY LIVE オープニング衣装', kana: '5thいやーあにばーさりーらいぶおーぷにんぐいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_5th_anniv_bw', name: '5th YEAR ANNIVERSARY LIVE 白黒衣装', kana: '5thいやーあにばーさりーらいぶしろくろいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_year_end_2025_lightblue', name: '2025年 年末水色衣装', kana: '2025ねんねんまつみずいろいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_halloween_2026', name: '2026年 ハロウィン', kana: '2026ねんはろうぃん', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_omitate', name: '過去衣装ランダム（ブレザー制服）', kana: 'かこいしょうらんだむぶれざーせいふく', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_cdtv_saison', name: '過去衣装（2019年 年末歌唱）', kana: 'かこいしょう2019ねんねんまつかしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_ban', name: '過去衣装（BAN MV）', kana: 'かこいしょうばんえむぶい', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_1st_aniv_pink', name: '過去衣装（1st YEAR ANNIVERSARY LIVE OP衣装）', kana: 'かこいしょう1stいやーあにばーさりーらいぶおーぷにんぐいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_black_dress', name: '過去衣装（As you know? ジャケット写真衣装）', kana: 'かこいしょうあずゆーのうじゃけっとしゃしんいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_shonin_seifuku', name: '過去衣装（承認欲求 制服）', kana: 'かこいしょうしょうにんよくきゅうせいふく', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_start_over', name: '過去衣装（2023年 NHK紅白歌唱衣装）', kana: 'かこいしょう2023ねんこうはくかしょういしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_nansai', name: '過去衣装（何歳の頃に戻りたいのか? パフォーマンス衣装）', kana: 'かこいしょうなんさいのころにもどりたいのかぱふぉーまんすいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_prince', name: '過去衣装（4th AREBA TOUR IN 東京ドーム OP衣装）', kana: 'かこいしょう4thありーなつあーいんとうきょうどーむおーぷにんぐいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_raw_meat', name: '過去衣装（2024年 NHK紅白 水引ハーネス衣装）', kana: 'かこいしょう2024ねんこうはくみずひきはーねすいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_knight', name: '過去衣装（2024年 NHK紅白 騎士衣装）', kana: 'かこいしょう2024ねんこうはくきしいしょう', group: '櫻坂', type: '通常', year: 2026 },
+      { id: 'sakura_past_cdtv_xmas', name: '過去衣装（Buddies感謝祭2025EX ライブ衣装）', kana: 'かこいしょうばでぃーずかんしゃさいらいぶいしょう', group: '櫻坂', type: '通常', year: 2026 },
 
-      { id: 'funiu_1st_nobodys_fault', name: '1st「Nobody\'s fault」封入', group: '櫻坂', type: '封入', year: 2020 },
-      { id: 'funiu_2nd_ban', name: '2nd「BAN」封入', group: '櫻坂', type: '封入', year: 2021 },
-      { id: 'funiu_3rd_nagaredama', name: '3rd「流れ弾」封入', group: '櫻坂', type: '封入', year: 2021 },
-      { id: 'funiu_4th_samidareyo', name: '4th「五月雨よ」封入', group: '櫻坂', type: '封入', year: 2022 },
-      { id: 'funiu_1st_album', name: '1st Album「As you know？」封入', group: '櫻坂', type: '封入', allowedPoses: ['ヨリ', 'チュウ'], year: 2022 },
-      { id: 'funiu_5th_sakurazuki', name: '5th「桜月」封入', group: '櫻坂', type: '封入', year: 2023 },
-      { id: 'funiu_6th_start_over', name: '6th「Start over!」封入', group: '櫻坂', type: '封入', year: 2023 },
-      { id: 'funiu_7th_shonin', name: '7th「承認欲求」封入', group: '櫻坂', type: '封入', year: 2023 },
-      { id: 'funiu_8th_nansai', name: '8th「何歳の頃に戻りたいのか？」封入', group: '櫻坂', type: '封入', year: 2024 },
-      { id: 'funiu_9th_jigojitoku', name: '9th「自業自得」封入', group: '櫻坂', type: '封入', year: 2024 },
-      { id: 'funiu_10th_iwtc', name: '10th「I want tomorrow to come」封入', group: '櫻坂', type: '封入', year: 2024 },
-      { id: 'funiu_11th_udagawa', name: '11th「UDAGAWA GENERATION」封入', group: '櫻坂', type: '封入', year: 2025 },
-      { id: 'funiu_2nd_album', name: '2nd Album「Addiction」封入', group: '櫻坂', type: '封入', year: 2025 },
-      { id: 'funiu_12th_make_or_break', name: '12th「Make or Break」封入', group: '櫻坂', type: '封入', year: 2025 },
-      { id: 'funiu_13th_unhappy_birthday', name: '13th「Unhappy birthday構文」封入', group: '櫻坂', type: '封入', year: 2025 },
-      { id: 'funiu_14th_growing_up_train', name: '14th「The growing up train」封入', group: '櫻坂', type: '封入', year: 2026 },
-      { id: 'funiu_15th_lonesome_kazoku', name: '15th「Lonsome rabitt / What\'s "KAZOKU"? 」封入', group: '櫻坂', type: '封入', year: 2026 },
-      { id: 'funiu_16th_ai_must_be', name: '16th「愛 MUST BE」封入', group: '櫻坂', type: '封入', year: 2026 },
-
-      { id: 'limited_tokyo_dome_jigojitoku', name: '「自業自得」東京ドーム限定', group: '櫻坂', type: '限定', allowedPoses: ['ヨリ'], year: 2024 },
-      { id: 'limited_tokyo_dome_secret', name: '東京ドーム限定秘蔵生写真（当選者100名）', group: '櫻坂', type: '限定', allowedPoses: ['チュウ'], year: 2024 },
-      { id: 'limited_fukubukuro_2025', name: '福袋2025', group: '櫻坂', type: '限定', allowedPoses: ['ヨリ'], year: 2025 },
-      { id: 'limited_fukubukuro_2026', name: '福袋2026', group: '櫻坂', type: '限定', allowedPoses: ['ヨリ'], year: 2026 }
     ];
 
     window.userState = { counts: {}, images: {} };
@@ -945,9 +949,14 @@
     function renderMarquee() {
       const track = document.getElementById('marqueeTrack');
       if (!track) return;
+
+      // MASTER_PHOTOS のコピーを作成してランダムにシャッフル
+      const shuffledPhotos = [...MASTER_PHOTOS].sort(() => Math.random() - 0.5);
+
       let html = '';
+      // シームレスにループさせるため、シャッフルした配列の先頭30件を2回繰り返して生成
       for(let loop = 0; loop < 2; loop++) {
-        MASTER_PHOTOS.slice(0, 30).forEach(item => {
+        shuffledPhotos.slice(0, 30).forEach(item => {
           const poses = item.allowedPoses || DEFAULT_POSES;
           const pose = poses[0];
           const imgSrc = getPoseImageSrc(item.id, pose);
@@ -982,7 +991,8 @@
         }
 
         const itemNameNorm = normalizeText(item.name);
-        const matchSearch = !searchNorm || itemNameNorm.includes(searchNorm);
+        const itemKanaNorm = item.kana ? normalizeText(item.kana) : '';
+        const matchSearch = !searchNorm || itemNameNorm.includes(searchNorm) || itemKanaNorm.includes(searchNorm);
         return matchGroup && matchType && matchYear && matchSearch;
       });
 
@@ -1076,8 +1086,8 @@
           html += `<tr>`;
           html += `<td style="text-align: left;">`;
           html += `<div class="missing-table-item">`;
-          html += `<strong>${item.name}</strong>`;
           html += `<img src="${yoriImgSrc}" class="missing-table-img" loading="lazy" decoding="async" onerror="handleImageError(this, '${item.id}', 'ヨリ')">`;
+          html += `<strong>${item.name}</strong>`;
           html += `</div>`;
           html += `</td>`;
 
